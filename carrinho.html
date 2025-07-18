@@ -1,184 +1,3 @@
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-
-<!-- TikTok Pixel Code Start -->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
-
-  ttq.load('D1O21RRC77UD9VPNEC50');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
-
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resumo do Pedido</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        :root {
-            --tiktok-red: #FE2C55; --text-primary: #161823; --text-secondary: #5C5E67;
-            --text-tertiary: #A4A6AD; --bg-primary: #FFFFFF; --bg-secondary: #F1F1F2;
-            --border-color: #EFEFF0; --green-secure: #00B27A;
-        }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; background-color: var(--bg-secondary); color: var(--text-primary); }
-        header { position: sticky; top: 0; background-color: var(--bg-primary); z-index: 100; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-        .header-top { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 8px; }
-        .header-top .back-arrow { position: absolute; left: 0; width: 24px; height: 24px; cursor: pointer; }
-        .header-top h1 { font-size: 17px; font-weight: 600; margin: 0; }
-        .secure-checkout-banner { text-align: center; font-size: 12px; color: var(--green-secure); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .secure-checkout-banner .icon { width: 14px; height: 14px; }
-        main { padding: 16px; padding-bottom: 100px; }
-        .card-section { background-color: var(--bg-primary); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-        .info-button-wrapper { margin-bottom: 12px; }
-        .info-button { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; background-color: var(--bg-primary); border-radius: 8px; border: 1px dashed var(--text-tertiary); }
-        .info-display { text-align: left; border: none; justify-content: flex-start; flex-direction: column; align-items: flex-start; }
-        .info-button .icon { width: 20px; height: 20px; color: var(--text-primary); }
-        .info-display .user-name { font-weight: 600; font-size: 15px; }
-        .info-display .user-details { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-        .shop-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); margin-bottom: 12px; }
-        .shop-header .shop-name { font-weight: 600; }
-        .shop-header .add-note { font-size: 14px; color: var(--text-tertiary); }
-        .product-item { display: flex; gap: 12px; }
-        .product-item img { width: 80px; height: 80px; border-radius: 4px; object-fit: cover; }
-        .product-info { flex-grow: 1; display: flex; flex-direction: column; }
-        .product-info .product-title { font-weight: 500; margin-bottom: 4px; }
-        .product-info .product-variant, .product-info .return-policy { font-size: 13px; color: var(--text-tertiary); margin-bottom: 6px; }
-        .product-price-quantity { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .product-price-quantity .price { font-weight: 600; font-size: 16px; }
-        .quantity-controls { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 4px; }
-        .quantity-btn { border: none; background: none; font-size: 20px; width: 30px; height: 30px; cursor: pointer; color: var(--text-primary); }
-        .quantity-btn:disabled { color: #ccc; cursor: not-allowed; }
-        .quantity-value { font-size: 15px; font-weight: 600; padding: 0 12px; }
-        .summary-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 12px; }
-        .summary-row.total { font-weight: 600; }
-        .summary-row .label { color: var(--text-secondary); }
-        .tax-info { text-align: right; font-size: 12px; color: var(--text-tertiary); margin-top: -8px; margin-bottom: 12px; }
-        .payment-method h2 { font-size: 16px; margin-bottom: 16px; }
-        .payment-option { display: flex; justify-content: space-between; align-items: center; }
-        .payment-option .pix-info { display: flex; align-items: center; gap: 8px; font-weight: 500; }
-        .payment-option .pix-info .pix-logo { width: 48px; height: auto; }
-        .radio-button { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-tertiary); display: flex; align-items: center; justify-content: center; }
-        .radio-button.selected { border-color: var(--tiktok-red); }
-        .radio-button.selected::after { content: ''; width: 10px; height: 10px; background-color: var(--tiktok-red); border-radius: 50%; }
-        .address-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-secondary); z-index: 1002; transform: translateX(100%); transition: transform 0.4s ease-in-out; overflow-y: auto; }
-        .address-page.visible { transform: translateX(0); }
-        .address-page header { border-bottom: none; background-color: var(--bg-primary); }
-        .address-page main { padding: 0 16px; }
-        .address-page h2 { font-size: 16px; font-weight: 600; margin: 16px 0; }
-        .address-form-group { background-color: var(--bg-primary); border-radius: 8px; }
-        .address-form-group .form-field { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-        .address-form-group .form-field:last-child { border-bottom: none; }
-        .address-form-group input { width: 100%; border: none; background: none; font-size: 15px; font-family: 'Inter', sans-serif; }
-        .address-form-group input:focus { outline: none; }
-        .address-form-group .split-field { display: flex; gap: 16px; }
-        .privacy-policy { font-size: 12px; color: #888; text-align: center; margin-top: 24px; padding-bottom: 16px;}
-        .privacy-policy a { color: var(--text-primary); font-weight: 500; text-decoration: none; }
-        .address-page .save-button { width: 100%; padding: 14px; border: none; border-radius: 25px; background-color: var(--tiktok-red); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .modal-overlay.visible { display: block; opacity: 1; }
-        .pix-modal-content { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-primary); z-index: 1001; border-radius: 16px 16px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s ease; text-align: center; }
-        .pix-modal-content.visible { transform: translateY(0); }
-        .pix-modal-content h2 { font-size: 18px; margin-top: 8px; margin-bottom: 8px; }
-        .pix-modal-content p { color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; line-height: 1.5; }
-        .pix-modal-close-btn { position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--text-tertiary); }
-        .pix-code-block { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-top: 16px; margin-bottom: 24px; }
-        .pix-code-text { font-family: 'Courier New', Courier, monospace; font-size: 14px; color: var(--text-secondary); word-wrap: break-word; text-align: left; margin-bottom: 12px; }
-        .copy-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border-radius: 25px; border: 1.5px solid var(--tiktok-red); background-color: #FFF2F4; color: var(--tiktok-red); font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-        .copy-button .icon { width: 20px; height: 20px; }
-        footer { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-primary); border-top: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .footer-total .total-label { font-size: 15px; }
-        .footer-total .total-amount { font-size: 18px; font-weight: 700; }
-        .footer-button { background-color: var(--tiktok-red); color: white; border: none; border-radius: 25px; padding: 14px 24px; font-size: 16px; font-weight: 600; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="header-top">
-            <a href="index.html" class="back-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
-            <h1>Resumo do pedido</h1>
-        </div>
-        <p class="secure-checkout-banner"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Finalização da compra segura garantida</p>
-    </header>
-    <main>
-        <div class="info-button-wrapper" id="address-container"></div>
-        <section class="card-section" id="cart-item-container"><p style="color: var(--text-tertiary);">Seu carrinho está vazio.</p></section>
-        <section class="card-section">
-            <h2>Resumo do pedido</h2>
-            <div class="summary-row"><span class="label">Subtotal</span><span id="subtotal-amount">R$ 0,00</span></div>
-            <div class="summary-row total"><span class="label">Total</span><span id="total-amount">R$ 0,00</span></div>
-            <p class="tax-info">Impostos inclusos</p>
-        </section>
-        <section class="card-section payment-method">
-            <h2>Forma de pagamento</h2>
-            <div class="payment-option">
-                <div class="pix-info"><img src="https://images.seeklogo.com/logo-png/39/2/pix-logo-png_seeklogo-392002.png" alt="Logo Pix" class="pix-logo"></div>
-                <div class="radio-button selected"></div>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <div class="footer-total">
-            <span class="total-label" id="footer-total-label">Total (0 itens)</span>
-            <div class="total-amount" id="footer-total-amount">R$ 0,00</div>
-        </div>
-        <button class="footer-button" id="place-order-button">Fazer pedido</button>
-    </footer>
-
-    <div class="address-page" id="address-page">
-        <header>
-            <div class="header-top">
-                <svg class="back-arrow" id="address-page-close-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                <h1>Adicionar o novo endereço</h1>
-            </div>
-        </header>
-        <main>
-            <form id="address-form">
-                <h2>Informações de contato</h2>
-                <div class="card-section address-form-group">
-                    <div class="form-field"><input type="text" id="full-name" placeholder="Nome completo" required></div>
-                    <div class="form-field"><input type="tel" id="cpf-input" placeholder="CPF (somente números)" required maxlength="11" pattern="\d{11}"></div>
-                    <div class="form-field"><input type="tel" id="phone" placeholder="Número de telefone" required></div>
-                    <div class="form-field"><input type="email" id="email" placeholder="Email" required></div>
-                </div>
-                <h2>Informações de endereço</h2>
-                <div class="card-section address-form-group">
-                    <div class="form-field"><input type="tel" id="cep" placeholder="CEP/Código postal" maxlength="8" required></div>
-                    <div class="form-field split-field">
-                        <input type="text" id="state" placeholder="Estado/UF" required style="width: 30%;">
-                        <input type="text" id="city" placeholder="Cidade" required>
-                    </div>
-                    <div class="form-field"><input type="text" id="neighborhood" placeholder="Bairro/Distrito" required></div>
-                    <div class="form-field"><input type="text" id="street" placeholder="Endereço" required></div>
-                    <div class="form-field"><input type="text" id="number" placeholder="Nº da residência. Use 's/n' se nenhum" required></div>
-                    <div class="form-field"><input type="text" id="complement" placeholder="Apartamento, bloco, unidade etc. (opcional)"></div>
-                </div>
-                <button type="submit" class="save-button">Salvar</button>
-                <p class="privacy-policy">Leia a <a href="#">Política de privacidade do TikTok</a> para saber mais sobre como usamos suas informações pessoais.</p>
-            </form>
-        </main>
-    </div>
-    <div class="modal-overlay" id="pix-overlay"></div>
-    <div class="pix-modal-content" id="pix-modal">
-        <svg class="pix-modal-close-btn" id="pix-modal-close-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        <h2>Pague com Pix</h2>
-        <p>Copie o código abaixo e pague no seu aplicativo do banco para finalizar a compra.</p>
-        <div class="pix-code-block">
-            <div class="pix-code-text" id="pix-code-text-display"></div>
-        </div>
-        <button class="copy-button" id="copy-pix-code-btn">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span id="copy-btn-text">Copiar código Pix</span>
-        </button>
-    </div>
-    
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELETORES DE ELEMENTOS ---
@@ -291,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('add-address-btn').addEventListener('click', openAddressPage);
     }
     
+    /*
+    // FUNÇÃO ANTIGA QUE FAZIA A CHAMADA PARA A API - AGORA DESATIVADA
     async function gerarCobrancaPix(payload) {
         const url = "https://api.ttkshopvans.shop/criar-cobranca";
         try {
@@ -300,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return data;
         } catch (error) { throw error; }
     }
+    */
 
     // --- EVENT LISTENERS ---
     addressCloseBtn.addEventListener('click', closeAddressPage);
@@ -352,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartItem = JSON.parse(cartItemJSON);
         const address = JSON.parse(addressJSON);
         
+        // ESTE É O PAYLOAD! Os dados que nosso backend precisará para gerar o PIX.
         const payload = {
             amount: Math.round(parseFloat(cartItem.price) * 100 * cartItem.quantity),
             paymentMethod: "pix",
@@ -379,10 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }]
         };
 
+        // Lógica antiga foi removida daqui.
+        // Por enquanto, vamos apenas mostrar os dados que seriam enviados.
+        console.log("Payload para enviar ao novo backend:", payload);
+        alert("Frontend está pronto! Verifique o console do navegador (F12) para ver os dados do pedido que serão enviados para a nova API.");
+
+        /* // LÓGICA ANTIGA DE CHAMADA DA API - SERÁ SUBSTITUÍDA PELA NOSSA NOVA LÓGICA DE BACKEND
         placeOrderButton.textContent = "Gerando Pix...";
         placeOrderButton.disabled = true;
         try {
-            const response = await gerarCobrancaPix(payload);
+            // A linha abaixo foi substituída
+            // const response = await gerarCobrancaPix(payload);
             const paymentData = response.data ? response.data.pix : response.pix;
 
             if (paymentData && paymentData.qrcode) {
@@ -400,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             placeOrderButton.textContent = "Fazer pedido";
             placeOrderButton.disabled = false;
         }
+        */
     });
     
     // Roda as funções de carregamento quando a página abre
@@ -407,5 +238,3 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUserData();
 });
 </script>
-</body>
-</html>
