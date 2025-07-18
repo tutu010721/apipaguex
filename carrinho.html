@@ -285,9 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('add-address-btn').addEventListener('click', openAddressPage);
     }
     
-    // ** ATUALIZADO: Função que chama o NOSSO backend no Render **
     async function gerarCobrancaPagueX(payload) {
-        // A URL agora aponta para o nosso backend no Render
         const url = "https://api.loja2pc.online/criar-cobranca";
         try {
             const response = await fetch(url, { 
@@ -356,9 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartItem = JSON.parse(cartItemJSON);
         const address = JSON.parse(addressJSON);
         
-        // ** ATUALIZADO: Payload correto para a PagueX API **
         const payload = {
-            amount: Math.round(parseFloat(cartItem.price) * cartItem.quantity * 100), // Valor em centavos
+            amount: Math.round(parseFloat(cartItem.price) * cartItem.quantity * 100),
             customer: {
                 name: address.fullName,
                 email: address.email,
@@ -383,20 +380,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }]
         };
 
-        // ** ATUALIZADO: Lógica de chamada e tratamento da resposta da PagueX **
         placeOrderButton.textContent = "Gerando Pix...";
         placeOrderButton.disabled = true;
         try {
             const responseData = await gerarCobrancaPagueX(payload);
             
-            // A resposta da PagueX tem o objeto 'pix'
-            if (responseData && responseData.pix && responseData.pix.qrCode) {
-                pixCodeToCopy = responseData.pix.qrCode; // O código copia e cola
-                pixCodeDisplayText.textContent = responseData.pix.qrCode;
+            // **** ESTA É A LINHA CORRIGIDA ****
+            if (responseData && responseData.pix && responseData.pix.qrcode) { // Usando 'qrcode' (minúsculo)
+                pixCodeToCopy = responseData.pix.qrcode;
+                pixCodeDisplayText.textContent = responseData.pix.qrcode;
                 openPixModal();
             } else { 
                 console.error("Resposta da API PagueX incompleta:", responseData);
-                throw new Error(responseData.message || "A resposta da API não contém as informações do Pix esperadas."); 
+                throw new Error("A resposta da API não contém as informações do Pix esperadas."); 
             }
         } catch (error) {
             alert(`Ocorreu um erro ao gerar a cobrança: ${error.message}`);
@@ -406,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Roda as funções de carregamento quando a página abre
     loadCartData();
     loadUserData();
 });
