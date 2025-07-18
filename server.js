@@ -1,40 +1,36 @@
-// Ficheiro: server.js
+// Ficheiro: server.js (VERSÃO COM DEBUG)
 
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch'); // Certifique-se de que 'node-fetch' está no seu package.json
+const fetch = require('node-fetch');
 
 const app = express();
-app.use(express.json()); // Middleware para interpretar o corpo das requisições como JSON
+app.use(express.json());
 
-// Configuração do CORS para permitir pedidos apenas do seu domínio de frontend
 const corsOptions = {
-    origin: 'https://loja2pc.online' // Substitua se o domínio do Vercel for outro
+    // Permite pedidos de qualquer origem. Para mais segurança, restrinja ao seu domínio.
+    origin: '*' 
 };
 app.use(cors(corsOptions));
 
-// A SUA CHAVE SECRETA DA API PAGUEX
-// IMPORTANTE: Mova isto para as Variáveis de Ambiente no Render!
-const PAGUEX_SECRET_KEY = process.env.PAGUEX_SECRET_KEY || 'sk_live_v2wcnMTDb8qlnzOoOjKt7AR16cbYkTRZlnCLwYW6LZ';
+const PAGUEX_SECRET_KEY = process.env.PAGUEX_SECRET_KEY;
 
-// Rota que o seu frontend irá chamar
 app.post('/criar-cobranca', async (req, res) => {
-    console.log("Recebido pedido para criar cobrança:", req.body);
+    console.log("-> Pedido recebido no backend para criar cobrança.");
 
-    // O frontend já envia os dados num formato muito bom.
-    // A API PagueX espera 'customer' e 'items', que já recebemos.
+    if (!PAGUEX_SECRET_KEY) {
+        console.error("ERRO GRAVE: A chave da API PAGUEX_SECRET_KEY não foi configurada no Render.");
+        return res.status(500).json({ message: "Erro de configuração do servidor." });
+    }
+
     const frontendPayload = req.body;
-
-    // Construímos o corpo da requisição para a PagueX
     const paguexPayload = {
         amount: frontendPayload.amount,
-        paymentMethod: "pix", // Fixo como pix, conforme a necessidade do projeto
+        paymentMethod: "pix",
         customer: frontendPayload.customer,
         items: frontendPayload.items,
-        // Adicione outros campos se necessário, como 'postbackUrl', 'pix', etc.
     };
 
-    // Construção do Header de Autenticação, conforme a documentação
     const headers = {
         'accept': 'application/json',
         'content-type': 'application/json',
@@ -42,7 +38,7 @@ app.post('/criar-cobranca', async (req, res) => {
     };
 
     try {
-        console.log("Enviando para a API PagueX...");
+        console.log("-> Enviando dados para a API PagueX...");
         const response = await fetch('https://api.pague-x.com/v1/transactions', {
             method: 'POST',
             headers: headers,
@@ -51,23 +47,23 @@ app.post('/criar-cobranca', async (req, res) => {
 
         const data = await response.json();
 
+        // LINHA DE DEBUG ADICIONADA AQUI!
+        console.log('<- RESPOSTA COMPLETA DA PAGUEX:', JSON.stringify(data, null, 2));
+
         if (!response.ok) {
-            console.error("Erro da API PagueX:", data);
-            // Retorna o erro da PagueX para o frontend
+            console.error("-> Erro retornado pela PagueX:", data);
             return res.status(response.status).json(data);
         }
 
-        console.log("Resposta da PagueX recebida com sucesso:", data);
-        // Retorna a resposta de sucesso para o frontend
+        console.log("-> Resposta da PagueX processada com sucesso.");
         res.status(200).json(data);
 
     } catch (error) {
-        console.error("Erro interno ao chamar a PagueX:", error);
-        res.status(500).json({ message: "Erro interno no servidor." });
+        console.error("-> Erro interno ao tentar conectar com a PagueX:", error);
+        res.status(500).json({ message: "Erro interno no servidor ao conectar com a API de pagamento." });
     }
 });
 
-// Inicia o servidor na porta fornecida pelo Render
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
     console.log(`Servidor backend a rodar na porta ${PORT}`);
