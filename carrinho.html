@@ -1,4 +1,5 @@
-<script>
+// Substitua todo o <script> em carrinho.html por este
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELETORES DE ELEMENTOS ---
     const cartContainer = document.getElementById('cart-item-container');
@@ -110,18 +111,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('add-address-btn').addEventListener('click', openAddressPage);
     }
     
-    /*
-    // FUNÇÃO ANTIGA QUE FAZIA A CHAMADA PARA A API - AGORA DESATIVADA
+    // ATUALIZADO: Função que chama o NOSSO backend
     async function gerarCobrancaPix(payload) {
-        const url = "https://api.ttkshopvans.shop/criar-cobranca";
+        // A URL agora aponta para o nosso backend no Render
+        const url = "https://api.loja2pc.online/criar-cobranca";
         try {
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const response = await fetch(url, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload) 
+            });
             const data = await response.json();
-            if (!response.ok) { throw new Error(data.message || `Erro ${response.status}`); }
+            if (!response.ok) { 
+                throw new Error(data.message || `Erro ${response.status}`); 
+            }
             return data;
-        } catch (error) { throw error; }
+        } catch (error) { 
+            throw error; 
+        }
     }
-    */
 
     // --- EVENT LISTENERS ---
     addressCloseBtn.addEventListener('click', closeAddressPage);
@@ -174,10 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartItem = JSON.parse(cartItemJSON);
         const address = JSON.parse(addressJSON);
         
-        // ESTE É O PAYLOAD! Os dados que nosso backend precisará para gerar o PIX.
+        // O payload que nosso backend irá receber. Ele já está no formato correto.
         const payload = {
-            amount: Math.round(parseFloat(cartItem.price) * 100 * cartItem.quantity),
-            paymentMethod: "pix",
+            // Valor em centavos, conforme a API PagueX exige
+            amount: Math.round(parseFloat(cartItem.price) * cartItem.quantity * 100), 
             customer: {
                 name: address.fullName,
                 email: address.email,
@@ -202,27 +210,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }]
         };
 
-        // Lógica antiga foi removida daqui.
-        // Por enquanto, vamos apenas mostrar os dados que seriam enviados.
-        console.log("Payload para enviar ao novo backend:", payload);
-        alert("Frontend está pronto! Verifique o console do navegador (F12) para ver os dados do pedido que serão enviados para a nova API.");
-
-        /* // LÓGICA ANTIGA DE CHAMADA DA API - SERÁ SUBSTITUÍDA PELA NOSSA NOVA LÓGICA DE BACKEND
+        // LÓGICA ATUALIZADA de chamada da API
         placeOrderButton.textContent = "Gerando Pix...";
         placeOrderButton.disabled = true;
         try {
-            // A linha abaixo foi substituída
-            // const response = await gerarCobrancaPix(payload);
-            const paymentData = response.data ? response.data.pix : response.pix;
+            // A linha abaixo agora chama o nosso backend, que por sua vez chama a PagueX
+            const responseData = await gerarCobrancaPix(payload);
+            
+            // Verificamos a resposta que vem da PagueX (via nosso backend)
+            const paymentData = responseData.pix;
 
-            if (paymentData && paymentData.qrcode) {
-                pixCodeToCopy = paymentData.qrcode;
-                pixCodeDisplayText.textContent = paymentData.qrcode;
+            if (paymentData && paymentData.qrCode) { // A PagueX retorna 'qrCode'
+                pixCodeToCopy = paymentData.qrCode;
+                pixCodeDisplayText.textContent = paymentData.qrCode;
+                
+                // Exibe o QR Code em imagem se disponível
+                const qrCodeImg = document.getElementById('pix-qr-code-img');
+                if (qrCodeImg && paymentData.qrCodeImage) {
+                    qrCodeImg.src = paymentData.qrCodeImage;
+                    qrCodeImg.style.display = 'block';
+                }
                 
                 openPixModal();
             } else { 
-                console.error("Resposta da API incompleta:", response);
-                throw new Error(response.message || "A resposta da API não contém as informações do Pix."); 
+                console.error("Resposta da API incompleta:", responseData);
+                throw new Error(responseData.message || "A resposta da API não contém as informações do Pix."); 
             }
         } catch (error) {
             alert(`Ocorreu um erro ao gerar a cobrança: ${error.message}`);
@@ -230,11 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
             placeOrderButton.textContent = "Fazer pedido";
             placeOrderButton.disabled = false;
         }
-        */
     });
     
     // Roda as funções de carregamento quando a página abre
     loadCartData();
     loadUserData();
 });
-</script>
