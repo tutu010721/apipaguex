@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Pedido</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root {
+            --tiktok-red: #FE2C55; --text-primary: #161823; --text-secondary: #5C5E67;
+            --bg-primary: #FFFFFF; --bg-secondary: #F1F1F2; --border-color: #EFEFF0;
+            --status-pending-bg: #FFFBE6; --status-pending-text: #F4B400;
+            --status-paid-bg: #E6F4EA; --status-paid-text: #34A853;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-secondary); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .status-container { background-color: var(--bg-primary); padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); max-width: 90%; width: 350px; }
+        .status-icon { width: 80px; height: 80px; margin: 0 auto 20px auto; }
+        .status-icon.pending .circle { stroke: var(--status-pending-text); }
+        .status-icon.paid .circle { stroke: var(--status-paid-text); }
+        .status-icon .checkmark { display: none; }
+        .status-icon.paid .checkmark { display: block; stroke: var(--status-paid-text); }
+        .status-icon.paid .clock { display: none; }
+        h1 { font-size: 22px; color: var(--text-primary); margin-bottom: 8px; }
+        p { color: var(--text-secondary); line-height: 1.5; }
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 14px; margin-top: 20px; }
+        .status-badge.pending { background-color: var(--status-pending-bg); color: var(--status-pending-text); }
+        .status-badge.paid { background-color: var(--status-paid-bg); color: var(--status-paid-text); }
+        .loader { width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--status-pending-text); border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="status-container" id="status-container">
+        <div id="icon-container">
+            </div>
+        <h1 id="status-title">Aguardando Pagamento</h1>
+        <p id="status-message">Assim que o pagamento do seu PIX for confirmado, esta página será atualizada automaticamente.</p>
+        <div id="badge-container">
+            <div class="loader" id="loader"></div>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const statusContainer = document.getElementById('status-container');
+    const iconContainer = document.getElementById('icon-container');
+    const statusTitle = document.getElementById('status-title');
+    const statusMessage = document.getElementById('status-message');
+    const badgeContainer = document.getElementById('badge-container');
+    const loader = document.getElementById('loader');
+
+    // Pega o ID da transação da URL (ex: status.html?id=123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const transactionId = urlParams.get('id');
+
+    if (!transactionId) {
+        statusTitle.textContent = "Erro";
+        statusMessage.textContent = "ID da transação não encontrado. Por favor, volte e tente novamente.";
+        loader.style.display = 'none';
+        return;
+    }
+
+    const setPendingUI = () => {
+        iconContainer.innerHTML = `
+            <svg class="status-icon pending" viewBox="0 0 52 52">
+                <circle class="circle" cx="26" cy="26" r="25" fill="none" stroke-width="2"/>
+                <path class="clock" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="2" stroke="var(--status-pending-text)" d="M26 14v12l8 4"/>
+            </svg>`;
+    };
+
+    const setPaidUI = () => {
+        iconContainer.innerHTML = `
+            <svg class="status-icon paid" viewBox="0 0 52 52">
+                <circle class="circle" cx="26" cy="26" r="25" fill="none" stroke-width="2"/>
+                <path class="checkmark" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="3" d="M14 27l8 8 16-16"/>
+            </svg>`;
+        statusTitle.textContent = "Pagamento Aprovado!";
+        statusMessage.textContent = "O seu pedido foi confirmado com sucesso. Em breve você receberá mais informações no seu e-mail.";
+        badgeContainer.innerHTML = `<div class="status-badge paid">Confirmado</div>`;
+        loader.style.display = 'none';
+    };
+
+    const checkStatus = async () => {
+        try {
+            const response = await fetch(`https://api.loja2pc.online/verificar-transacao/${transactionId}`);
+            if (!response.ok) {
+                // Se der erro, para de verificar para não sobrecarregar
+                clearInterval(statusInterval);
+                statusMessage.textContent = "Ocorreu um erro ao verificar o status. Tente recarregar a página.";
+                loader.style.display = 'none';
+                return;
+            }
+
+            const data = await response.json();
+            
+            // A API da PagueX retorna 'paid' quando o pagamento é confirmado
+            if (data.status === 'paid') {
+                setPaidUI();
+                clearInterval(statusInterval); // Para de verificar
+            }
+        } catch (error) {
+            console.error("Erro ao verificar status:", error);
+            clearInterval(statusInterval);
+            loader.style.display = 'none';
+        }
+    };
+
+    // Inicia a UI como pendente
+    setPendingUI();
+
+    // Verifica o status a cada 5 segundos
+    const statusInterval = setInterval(checkStatus, 5000);
+
+    // Faz uma verificação imediata ao carregar a página
+    checkStatus();
+});
+</script>
+
+</body>
+</html>
