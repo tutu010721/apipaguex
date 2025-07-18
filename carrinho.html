@@ -76,17 +76,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         .privacy-policy { font-size: 12px; color: #888; text-align: center; margin-top: 24px; padding-bottom: 16px;}
         .privacy-policy a { color: var(--text-primary); font-weight: 500; text-decoration: none; }
         .address-page .save-button { width: 100%; padding: 14px; border: none; border-radius: 25px; background-color: var(--tiktok-red); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .modal-overlay.visible { display: block; opacity: 1; }
-        .pix-modal-content { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-primary); z-index: 1001; border-radius: 16px 16px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s ease; text-align: center; }
-        .pix-modal-content.visible { transform: translateY(0); }
-        .pix-modal-content h2 { font-size: 18px; margin-top: 8px; margin-bottom: 8px; }
-        .pix-modal-content p { color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; line-height: 1.5; }
-        .pix-modal-close-btn { position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--text-tertiary); }
-        .pix-code-block { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-top: 16px; margin-bottom: 24px; }
-        .pix-code-text { font-family: 'Courier New', Courier, monospace; font-size: 14px; color: var(--text-secondary); word-wrap: break-word; text-align: left; margin-bottom: 12px; }
-        .copy-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border-radius: 25px; border: 1.5px solid var(--tiktok-red); background-color: #FFF2F4; color: var(--tiktok-red); font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-        .copy-button .icon { width: 20px; height: 20px; }
         footer { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-primary); border-top: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .footer-total .total-label { font-size: 15px; }
         .footer-total .total-amount { font-size: 18px; font-weight: 700; }
@@ -159,23 +148,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             </form>
         </main>
     </div>
-    <div class="modal-overlay" id="pix-overlay"></div>
-    <div class="pix-modal-content" id="pix-modal">
-        <svg class="pix-modal-close-btn" id="pix-modal-close-btn" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        <h2>Pague com Pix</h2>
-        <p>Copie o código abaixo e pague no seu aplicativo do banco para finalizar a compra.</p>
-        <div class="pix-code-block">
-            <div class="pix-code-text" id="pix-code-text-display"></div>
-        </div>
-        <button class="copy-button" id="copy-pix-code-btn">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-            <span id="copy-btn-text">Copiar código Pix</span>
-        </button>
-    </div>
     
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- SELETORES DE ELEMENTOS ---
     const cartContainer = document.getElementById('cart-item-container');
     const subtotalAmount = document.getElementById('subtotal-amount');
     const totalAmount = document.getElementById('total-amount');
@@ -187,16 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addressCloseBtn = document.getElementById('address-page-close-btn');
     const addressForm = document.getElementById('address-form');
     const cepInput = document.getElementById('cep');
-    const cpfInput = document.getElementById('cpf-input');
-    const pixOverlay = document.getElementById('pix-overlay');
-    const pixModal = document.getElementById('pix-modal');
-    const pixCloseBtn = document.getElementById('pix-modal-close-btn');
-    const pixCodeDisplayText = document.getElementById('pix-code-text-display');
-    const copyPixCodeBtn = document.getElementById('copy-pix-code-btn');
-    const copyBtnText = document.getElementById('copy-btn-text');
-    let pixCodeToCopy = "";
 
-    // --- FUNÇÕES DE VALIDAÇÃO E BUSCA ---
     function validaCPF(cpf) {
         cpf = String(cpf).replace(/[^\d]+/g, '');
         if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -220,26 +186,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
             if (!response.ok) throw new Error('Falha na rede');
             const data = await response.json();
-            if (data.erro) {
-                alert('CEP não encontrado.'); return;
-            }
+            if (data.erro) { alert('CEP não encontrado.'); return; }
             document.getElementById('street').value = data.logradouro;
             document.getElementById('neighborhood').value = data.bairro;
             document.getElementById('city').value = data.localidade;
             document.getElementById('state').value = data.uf;
-        } catch (error) {
-            console.error("Erro ao buscar CEP:", error);
-            alert("Não foi possível buscar o CEP. Verifique sua conexão.");
-        }
+        } catch (error) { console.error("Erro ao buscar CEP:", error); alert("Não foi possível buscar o CEP."); }
     }
 
-    // --- FUNÇÕES DE UI ---
     const openAddressPage = () => addressPage.classList.add('visible');
     const closeAddressPage = () => addressPage.classList.remove('visible');
-    const openPixModal = () => { pixOverlay.classList.add('visible'); pixModal.classList.add('visible'); };
-    const closePixModal = () => { pixOverlay.classList.remove('visible'); pixModal.classList.remove('visible'); };
 
-    // --- LÓGICA DE DADOS DO CARRINHO ---
     function loadCartData() {
         const produtoJSON = localStorage.getItem('cartItem');
         if (!produtoJSON) {
@@ -256,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
         totalAmount.textContent = totalFormatado;
         footerTotalLabel.textContent = `Total (${produto.quantity} item)`;
         footerTotalAmount.textContent = totalFormatado;
-        
         document.getElementById('increase-cart-qty').addEventListener('click', () => updateCartQuantity(1));
         document.getElementById('decrease-cart-qty').addEventListener('click', () => updateCartQuantity(-1));
     }
@@ -264,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCartQuantity(change) {
         const produtoJSON = localStorage.getItem('cartItem');
         if (!produtoJSON) return;
-        
         let produto = JSON.parse(produtoJSON);
         let newQuantity = produto.quantity + change;
         if (newQuantity >= 1) {
@@ -287,57 +242,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function gerarCobrancaPagueX(payload) {
         const url = "https://api.loja2pc.online/criar-cobranca";
-        try {
-            const response = await fetch(url, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify(payload) 
-            });
-            const data = await response.json();
-            if (!response.ok) { 
-                throw new Error(data.message || `Erro do servidor: ${response.status}`); 
-            }
-            return data;
-        } catch (error) { 
-            throw error; 
-        }
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || `Erro do servidor: ${response.status}`);
+        return data;
     }
 
-    // --- EVENT LISTENERS ---
     addressCloseBtn.addEventListener('click', closeAddressPage);
     cepInput.addEventListener('blur', buscaCEP);
-    pixCloseBtn.addEventListener('click', closePixModal);
-    pixOverlay.addEventListener('click', closePixModal);
-    
-    copyPixCodeBtn.addEventListener('click', () => {
-        if (pixCodeToCopy) {
-            navigator.clipboard.writeText(pixCodeToCopy).then(() => {
-                copyBtnText.textContent = 'Copiado!';
-                copyPixCodeBtn.style.backgroundColor = '#E0F8F4';
-                copyPixCodeBtn.style.borderColor = '#32BCAD';
-                copyPixCodeBtn.style.color = '#32BCAD';
-                setTimeout(() => {
-                    copyBtnText.textContent = 'Copiar código Pix';
-                    copyPixCodeBtn.style.backgroundColor = '#FFF2F4';
-                    copyPixCodeBtn.style.borderColor = 'var(--tiktok-red)';
-                    copyPixCodeBtn.style.color = 'var(--tiktok-red)';
-                }, 2500);
-            }).catch(err => console.error('Falha ao copiar: ', err));
-        }
-    });
 
     addressForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const cpfValue = cpfInput.value;
-        if (!validaCPF(cpfValue)) {
-            alert("CPF inválido! Por favor, verifique os dígitos."); return;
-        }
+        const cpfValue = document.getElementById('cpf-input').value;
+        if (!validaCPF(cpfValue)) { alert("CPF inválido! Por favor, verifique os dígitos."); return; }
         const addressData = {
-            fullName: document.getElementById('full-name').value, cpf: cpfValue,
-            phone: document.getElementById('phone').value, email: document.getElementById('email').value, 
-            cep: document.getElementById('cep').value, state: document.getElementById('state').value, 
-            city: document.getElementById('city').value, neighborhood: document.getElementById('neighborhood').value, 
-            street: document.getElementById('street').value, number: document.getElementById('number').value, 
+            fullName: document.getElementById('full-name').value, cpf: cpfValue, phone: document.getElementById('phone').value, email: document.getElementById('email').value, 
+            cep: document.getElementById('cep').value, state: document.getElementById('state').value, city: document.getElementById('city').value, 
+            neighborhood: document.getElementById('neighborhood').value, street: document.getElementById('street').value, number: document.getElementById('number').value, 
             complement: document.getElementById('complement').value,
         };
         localStorage.setItem('user_address', JSON.stringify(addressData));
@@ -349,54 +270,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartItemJSON = localStorage.getItem('cartItem');
         const addressJSON = localStorage.getItem('user_address');
         if (!cartItemJSON) { alert("Seu carrinho está vazio!"); return; }
-        if (!addressJSON) { alert("Por favor, adicione seu endereço e CPF antes de fazer o pedido."); openAddressPage(); return; }
+        if (!addressJSON) { alert("Por favor, adicione seu endereço e CPF."); openAddressPage(); return; }
 
         const cartItem = JSON.parse(cartItemJSON);
         const address = JSON.parse(addressJSON);
         
         const payload = {
             amount: Math.round(parseFloat(cartItem.price) * cartItem.quantity * 100),
-            customer: {
-                name: address.fullName,
-                email: address.email,
-                phone: address.phone.replace(/[^\d]+/g, ''),
-                document: { type: "cpf", number: address.cpf.replace(/[^\d]+/g, '') },
-                address: {
-                    street: address.street,
-                    streetNumber: address.number,
-                    complement: address.complement,
-                    zipCode: address.cep.replace(/\D/g, ''),
-                    neighborhood: address.neighborhood,
-                    city: address.city,
-                    state: address.state,
-                    country: "BR"
-                }
-            },
-            items: [{
-                title: `${cartItem.name} (${cartItem.variant})`,
-                unitPrice: Math.round(parseFloat(cartItem.price) * 100),
-                quantity: cartItem.quantity,
-                tangible: true
-            }]
+            customer: { name: address.fullName, email: address.email, phone: address.phone.replace(/[^\d]+/g, ''), document: { type: "cpf", number: address.cpf.replace(/[^\d]+/g, '') }, address: { street: address.street, streetNumber: address.number, complement: address.complement, zipCode: address.cep.replace(/\D/g, ''), neighborhood: address.neighborhood, city: address.city, state: address.state, country: "BR" } },
+            items: [{ title: `${cartItem.name} (${cartItem.variant})`, unitPrice: Math.round(parseFloat(cartItem.price) * 100), quantity: cartItem.quantity, tangible: true }]
         };
 
-        placeOrderButton.textContent = "Gerando Pix...";
+        placeOrderButton.textContent = "Processando...";
         placeOrderButton.disabled = true;
         try {
             const responseData = await gerarCobrancaPagueX(payload);
-            
-            // **** ESTA É A LINHA CORRIGIDA ****
-            if (responseData && responseData.pix && responseData.pix.qrcode) { // Usando 'qrcode' (minúsculo)
-                pixCodeToCopy = responseData.pix.qrcode;
-                pixCodeDisplayText.textContent = responseData.pix.qrcode;
-                openPixModal();
+            if (responseData && responseData.id) {
+                window.location.href = `status.html?id=${responseData.id}`;
             } else { 
-                console.error("Resposta da API PagueX incompleta:", responseData);
-                throw new Error("A resposta da API não contém as informações do Pix esperadas."); 
+                throw new Error("A resposta da API não contém as informações esperadas."); 
             }
         } catch (error) {
-            alert(`Ocorreu um erro ao gerar a cobrança: ${error.message}`);
-        } finally {
+            alert(`Ocorreu um erro: ${error.message}`);
             placeOrderButton.textContent = "Fazer pedido";
             placeOrderButton.disabled = false;
         }
